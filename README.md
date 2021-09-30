@@ -6,13 +6,14 @@ import speech_recognition as sr
 import wikipedia
 import webbrowser
 import os
-import random
+import random    # Generate random numbers
 import smtplib  # for sending emails
 import time
 from pynotifier import Notification
 import sports       # Gives live info about sports
 import requests
 import json
+from pasw import psw
 
 
 engine = pyttsx3.init('sapi5')
@@ -64,7 +65,7 @@ def sendEmail(to, content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login(user="mppatil0103@gmail.com", password="milind@0103")
+    server.login(user="mppatil0103@gmail.com", password=psw)    #psw for password security
     server.sendmail('mppatil0103@gmail.com', to, content)
     server.close()
 
@@ -198,4 +199,3 @@ if __name__ == '__main__':
         elif 'goodbye' in query:
             speak("good bye")
             exit()
-
