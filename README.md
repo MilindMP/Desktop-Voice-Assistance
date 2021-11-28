@@ -9,13 +9,12 @@ import os
 import random    # Generate random numbers
 import smtplib  # for sending emails
 import time
-from pynotifier import Notification
-import sports       # Gives live info about sports
 import requests
 import json
 from pasw import psw
+import winsound
 
-# converting text to speech
+# due to windows os i am using SAPI voice it is speech application programming interface
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
@@ -40,16 +39,17 @@ def wishMe():
 
 
 def takeCommond():
-    # it takes microphone input from user and return string output
+    # it takes microphone voice input from user and return string output
 
     r = sr.Recognizer()
-    with sr.Microphone() as source:
+    with sr.Microphone() as source:     # use the default microphone as the audio source
         print("Listening....")
-        r.pause_threshold = 1
+        r.pause_threshold = 1          # listen for 1 second
         audio = r.listen(source)
 
     try:
         print("Recognizing....")
+        # recognize speech using Google Speech Recognition
         query = r.recognize_google(audio, language='en-in')
         print(f"user said: {query}\n")
 
@@ -61,10 +61,11 @@ def takeCommond():
 
 
 def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server = smtplib.SMTP('smtp.gmail.com', 587)      # (Host, port)
     server.ehlo()
     server.starttls()
-    server.login(user="mppatil0103@gmail.com", password=psw)    #psw for password security
+    # psw for password security
+    server.login(user="mppatil0103@gmail.com", password=psw)
     server.sendmail('mppatil0103@gmail.com', to, content)
     server.close()
 
@@ -84,16 +85,16 @@ if __name__ == '__main__':
             speak(results)
 
         elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
             speak('sure')
+            webbrowser.open("youtube.com")
 
         elif 'open instagram' in query:
-            webbrowser.open("instagram.com")
             speak('ok')
+            webbrowser.open("instagram.com")
 
         elif 'open whatsapp web' in query:
-            webbrowser.open("web.whatsapp.com")
             speak('sure')
+            webbrowser.open("web.whatsapp.com")
 
         elif 'open google' in query:
             speak("what u want to search?")
@@ -116,12 +117,12 @@ if __name__ == '__main__':
             webbrowser.open('spotify.com')
             speak('This is cool')
 
-        elif "what's the time" in query:
+        elif "tell me the time" in query:
             strtime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"the time is {strtime}")
             print(strtime)
 
-        elif 'what is the date' in query:
+        elif "what is the today's date" in query:
             strdate = datetime.date.today().strftime("%D")
             speak(f"MP, the date is {strdate}")
             print(strdate)
@@ -130,11 +131,6 @@ if __name__ == '__main__':
             codepath = "C:\\Users\\hp\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
             os.startfile(codepath)
             speak('ok, its time for coding')
-
-        elif 'open pycharm' in query:
-            codepath1 = "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2020.1.2\\bin\\pycharm64.exe"
-            os.startfile(codepath1)
-            speak('Lets some do python practise')
 
         elif 'send a mail' in query:
             try:
@@ -159,6 +155,7 @@ if __name__ == '__main__':
             if __name__ == '__main__':
                 speak("News for today.. Lets begin")
                 url = "https://newsapi.org/v2/top-headlines?sources=the-times-of-india&apiKey=d093053d72bc40248998159804e0e67d"
+
                 news = requests.get(url).text
                 news_dict = json.loads(news)
                 arts = news_dict['articles']
@@ -195,6 +192,22 @@ if __name__ == '__main__':
                 countdown(t)
             speak("Time Out")
 
+        elif 'alarm' in query:
+
+            speak(
+                "sir please tell me the timme to set alarm. for example set alarm to 05:18 pm")
+
+            alarm_time = takeCommond()      # Jarvis accept 5:18 p.m. type of string
+            alarm_time = alarm_time.replace("set alarm to", "")  # 5:18 p.m.
+            alarm_time = alarm_time.replace(".", "")     # 5:18 pm
+            alarm_time = alarm_time.upper()     # 5:18 PM
+            import MyAlarm
+            MyAlarm.alarm(alarm_time)
+
+        elif 'volume mute' in query or 'mute alarm' in query:
+            pyautogui.press("mutealarm")
+
         elif 'goodbye' in query:
             speak("good bye")
             exit()
+
